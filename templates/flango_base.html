@@ -1,0 +1,39 @@
+<html>
+
+	<script src="{{STATIC_URL}}js/jquery.min.js"></script>
+	<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap.min.css">
+	<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="{{STATIC_URL}}css/flango.css">
+	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+	<script src="{{STATIC_URL}}js/flango_utils.js"></script>
+	
+	<nav class="navbar navbar-default" role="navigation">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="#">
+	        Flango
+	      </a>
+	      
+	      <a class="navbar-brand" href="/flango/objects/">
+	        Objects
+	      </a>
+	      
+	      {% for obj in objects %}
+	          <a class="navbar-brand" href="{{ obj.link }}">
+		        	{{ obj.label }}
+		      </a>
+	      {% endfor %}
+	    </div>
+	  </div>
+	  	
+		
+	</nav>
+
+	{% block header %}
+	
+	{% endblock %}
+	
+	{% block body %}
+	
+	{% endblock  %}
+</html>

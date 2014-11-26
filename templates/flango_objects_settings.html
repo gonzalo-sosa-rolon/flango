@@ -1,0 +1,66 @@
+{% extends "flango_base.html" %}
+	
+
+
+{% block body %}
+	
+	<script>
+		
+		
+	</script>
+	
+	<div class="flango_header">
+		<h1>
+		Object settings
+		</h1>
+	</div>
+	
+	<div style="padding:10px"> 
+	
+	<br/>
+	<script>
+	 function newObject() {
+		 window.location.href = "/form/Object/?backURL=/flango/objects/"
+	 }
+	 
+	 function edit(pk) {
+		 window.location.href = "/flango/objects/edit/" + pk + "/";	 
+	 }
+	 
+	 
+	</script>
+	
+	<button type="button" class="btn btn-primary" onclick="newObject()">New object</button>
+	
+	<br/><br/>
+	
+	<div style="width:70%">
+	
+	<table class="table">
+		<thead>
+		
+		<tr>
+			<td> Object name </td>
+			<td> Plural </td>
+			<td> Singular </td>
+			<td> Edit </td>
+			<td> Delete </td>
+		</tr>
+		</thead>
+		{% for obj in existing_objects %}
+		
+			<tr>
+				<td> {{obj.class_name }}</td>
+				<td>{{obj.plural }}</td>
+				<td>{{obj.singular }}</td>
+		 		<td><button type="button" class="btn btn-default" onclick="edit('{{obj.pk}}')">Edit</button></td>
+				<td><button type="button" class="btn btn-danger">Delete</button></td>
+			</tr>
+		{% endfor %}
+		
+	<table>
+	
+	</div>
+	</div>
+	
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "flango_base.html" %}
+	
+
+
+{% block body %}
+	
+	
+	<script>
+	
+		function postSuccess(response) {
+			
+			if (response.error) {
+				alert(response.data);
+			} else {
+				goBack();
+			}
+			
+		}
+		
+		function postForm() {
+			
+			$.ajax({
+				type: "POST",
+				data: $("#object_form").serializeArray(),
+				success: postSuccess
+				});
+		}
+		
+		function goBack() {
+			var backURL = GetURLParameter("backURL");
+			window.location.href = backURL;
+		}
+		
+		function cancelForm() {
+			goBack();
+		}
+		
+		$(document).ready(function() {
+			{% for field in form %}
+				if (GetURLParameter("{{field.name}}")) {
+					$("#{{field.name}}").val(GetURLParameter("{{field.name}}"));
+				}
+			{% endfor %}
+		});
+		
+	</script>
+	
+	<div class="flango_header">
+		<h1>
+		{{ title }}
+		</h1>
+	</div>
+	
+	<br/>
+	
+	<div id="formContainer" style="padding:30px" method="POST">
+		
+		<form role="form" id="object_form">
+		{% csrf_token %}
+		{% for field in form %}
+			<div class="form-group">
+		    	<label>{{ field.title }}</label>
+		    	{{ field.input|safe }}
+		  	</div>
+		{% endfor %}
+		  	
+		 <button type="button" class="btn btn-primary" onclick="postForm();">Save</button>
+		 <button type="button" class="btn btn-danger">Delete</button>
+		 <button type="button" class="btn btn-default" onclick="cancelForm();">Cancel</button>
+		<form>
+	</div>	
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "flango_base.html" %}
+	
+
+
+{% block body %}
+	
+	<script>
+		
+		$(document).ready(function() {
+			{% for field in fields %}
+			
+				if (GetURLParameter("{{ field.name}}")) {
+					$("#id_{{ field.name}}").val(GetURLParameter("{{ field.name}}"));
+				}
+			
+			{% endfor %}
+			
+		});
+		
+		function applyFilters(keyPressed) {
+			
+			if (keyPressed == 13) {
+				var loc = location.protocol + '//' + location.host + location.pathname;
+				window.location.href = loc + getFilters();
+			}
+		}
+		
+		function getFilters(parameters) {
+			
+			var filters = '';
+			
+			if (parameters) {
+				filters += parameters;
+			}
+			
+			{% for field in fields %}
+				
+				if ($("#id_{{ field.name}}").val()) {
+					if (filters) {
+						filters += "&{{ field.name}}=" + $("#id_{{ field.name}}").val();
+					} else {
+						filters += "?{{ field.name}}=" + $("#id_{{ field.name}}").val();
+					}
+				}
+			{% endfor %}
+			
+			return filters;
+		}
+		
+		function sortBy(field, ascDesc) {
+			var loc = location.protocol + '//' + location.host + location.pathname;
+			var sort = "?sort__field=";
+			
+			if (!ascDesc) {
+				sort += "-";	
+			}
+			
+			sort += field;
+			
+			window.location.href = loc + getFilters(sort);
+		}
+		
+	</script>
+	
+	<div class="flango_header">
+		<h1>
+		{{ title }}
+		</h1>
+	</div>
+	
+	<br/>
+	
+	<nav>
+	
+	  <ul class="pagination">
+	  
+	  	{% for page in pages %}
+			<li><a href="{{page.link}}">{{page.label}}</a></li>
+		{% endfor %}
+	  </ul>
+	</nav>	
+	<table class="table" style="width:80%;">
+		<thead>
+		<tr>
+		{% for field in fields %}
+		
+			<td>
+				
+				{% if field.asc %}
+					<div onclick="sortBy('{{ field.name}}')" style="cursor:pointer">
+					<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> 
+				{% elif field.desc %}
+					<div onclick="sortBy('{{ field.name}}', 1)" style="cursor:pointer">
+					<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+				{% else %}
+					<div onclick="sortBy('{{ field.name}}')" style="cursor:pointer">
+				{% endif %}
+				 
+				{{ field.title}}
+				</div>
+				
+				<input name="{{ field.name}}" class="form-control" id="id_{{ field.name}}" onkeydown="applyFilters(event.keyCode);"/>
+			</td>
+		{% endfor %}
+		
+		</tr>
+		</thead>
+		{% for element in elements %}
+			<tr>
+			
+				{% for column_value in element %}
+				
+				<td>
+					{{ column_value }}	
+				</td>
+				
+				{% endfor %}
+			</tr>
+		{% endfor %}
+		
+	<table>
+	
+	<nav>
+	
+	  <ul class="pagination">
+	  
+	  	{% for page in pages %}
+			<li><a href="{{page.link}}">{{page.label}}</a></li>
+		{% endfor %}
+	  </ul>
+	</nav>	
+	
+{% endblock %}

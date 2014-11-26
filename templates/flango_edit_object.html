@@ -1,0 +1,69 @@
+{% extends "flango_base.html" %}
+	
+
+
+{% block body %}
+	
+	<script>
+		
+		function postForm() {
+			
+			$.ajax({
+				type: "POST",
+				data: $("#object_form").serializeArray(),
+				success: postSuccess
+				});
+		}
+	</script>
+	
+	<div class="flango_header">
+		<h1>
+		Object: {{ title }}
+		</h1>
+	</div>
+	
+	<div style="padding:10px"> 
+	
+	
+	<br/><br/>
+	
+	<form role="form" id="object_form">
+		{% csrf_token %}
+		
+		{% for field in form %}
+			<div class="form-group">
+		    	<label>{{ field.title }}</label>
+		    	{{ field.input|safe }}
+		  	</div>
+		{% endfor %}
+		  	
+		 <button type="button" class="btn btn-primary" onclick="postForm();">Save</button>
+	</form>
+	
+	<table class="table" style="width:80%;">
+		<thead>
+		<tr>
+			<td>
+			Field Name
+			</td>
+			
+			<td>
+			Field Type
+			</td>
+		</tr>
+		</thead>
+		
+		{% for field in class_fields %}
+			<tr>
+			<td>
+			{{ field.name }}
+			</td>	
+			<td>
+			{{ field.type }}	
+			</td>	
+			</tr>
+		{% endfor %}
+		
+	</div>
+	
+{% endblock %}
