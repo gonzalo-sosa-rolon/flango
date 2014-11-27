@@ -310,21 +310,76 @@ class FormView(FlangoTemplateView):
         
         return context
     
-class FLangoEditObject(FormView):
+class FLangoEditObject(FlangoTemplateView):
     template_name = "flango_edit_object.html"
     
     def get_title(self):
         return self.args['cls'].title()
     
+    def get_fields(self):
+        result = []
+        fields = ObjectField.objects.filter(field_object__class_name__contains=str(self.class_name))
+        
+        for f in fields:
+            result.append({'field_name': f.field_name,
+                          'field_type': f.field_type,
+                          'mandatory': f.mandatory})
+        return result
+    
+    def get_field_input(self, field, value="", updateable=True):
+        name = django_util.get_field_name(field)
+        title = django_util.get_field_title(field)
+        
+        if (django_util.is_primary_key(field) or not updateable):
+            return'<input type="TEXT" name="%s" value="%s" class="form-control" placeholder="%s" readonly/>' % (name, value, title)
+        else:
+            return'<input type="TEXT" id="%s" name="%s" value="%s" class="form-control" placeholder="%s"/>' % (name, name, value, title)
+        
+    def get_form(self):
+        
+        cls = "Object"
+            
+        try:
+            ob_form = ObjectForm.objects.get(form_name=cls)
+            fields = ObjectFormField.objects.filter(form=ob_form).order_by('posicion')
+        except:
+            print ("Getting default form for class")
+            ob_form = ObjectForm.get_default_form(cls)
+            fields = ObjectFormField.get_default_fields(ob_form)
+            
+        form = []
+        cls = get_class(cls)
+        instance = None
+        
+        instance = cls.objects.get(pk=self.pk)
+            
+        for f in fields:
+            field = django_util.get_field(cls, f.field_name)
+            value = ''
+            updateable = True
+            
+            if (instance is not None):
+                value = django_util.get_value(instance, field)
+                updateable = f.updateable
+            field_type = django_util.get_field_type_title(field)
+            form.append({'title': django_util.get_field_title(field),
+                         'name': f.field_name,
+                         'type': field_type,
+                         'pk': f.pk,
+                         'input': self.get_field_input(field, value, updateable)})
+            
+        return form
+            
     def get_context_data(self, **kwargs):
-        kwargs['cls'] = 'object'
+        self.pk = int(kwargs['pk'])
+        self.obj_to_edit = Object.objects.get(pk=self.pk)
+        self.class_name = str(self.obj_to_edit.class_name)
         context = super(FLangoEditObject, self).get_context_data(**kwargs)
         self.args = kwargs
-        obj_to_edit = Object.objects.get(pk=kwargs['pk'])
-        class_name = str(obj_to_edit.class_name)
-        del self.args['pk']
-        context['class_fields'] = self.get_form(class_name)
-        context['title'] = class_name
+        context['class_fields'] = self.get_fields()
+        context['title'] = self.class_name
+        context["objects"] = self.get_objects()
+        context["form"] = self.get_form()
         
         return context
 

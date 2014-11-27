@@ -24,9 +24,13 @@
 	
 	<div style="padding:10px"> 
 	
+
 	
-	<br/><br/>
+	<table style="border-collapse: separate; border-spacing: 30px">
+		
+	<tr>
 	
+	<td valign="top" width="50%">
 	<form role="form" id="object_form">
 		{% csrf_token %}
 		
@@ -38,9 +42,13 @@
 		{% endfor %}
 		  	
 		 <button type="button" class="btn btn-primary" onclick="postForm();">Save</button>
+		 <button type="button" class="btn btn-success" onclick="edit('{{obj.pk}}')">Add Field</button>
 	</form>
 	
-	<table class="table" style="width:80%;">
+	</td>
+	
+	<td valign="top">
+	<table class="table">
 		<thead>
 		<tr>
 			<td>
@@ -50,20 +58,35 @@
 			<td>
 			Field Type
 			</td>
+			
+			<td>
+			Mandatory
+			</td>
 		</tr>
 		</thead>
 		
 		{% for field in class_fields %}
 			<tr>
 			<td>
-			{{ field.name }}
+			{{ field.field_name }}
 			</td>	
 			<td>
-			{{ field.type }}	
+			{{ field.field_type }}	
 			</td>	
+			
+			<td>
+				{{ field.mandatory }}	
+			</td>
+			
+			<td>
+				<button type="button" class="btn btn-default" onclick="edit('{{obj.pk}}')">Edit</button>
+				<td><button type="button" class="btn btn-danger">Delete</button></td>
+			</td>
 			</tr>
 		{% endfor %}
-		
+	</td>
+	</tr>
+	</table>
 	</div>
 	
 {% endblock %}

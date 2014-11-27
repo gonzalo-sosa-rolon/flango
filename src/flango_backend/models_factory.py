@@ -49,7 +49,10 @@ def get_type(field_type, field_aditional_info):
     elif (field_type == "TextField"):
         return models.TextField()
     elif (field_type == "ForeignKey"):
-        return models.ForeignKey(field_aditional_info)
+        if (field_aditional_info not in globals()):
+            globals()[field_aditional_info] = get_class(field_aditional_info)
+            
+        return models.ForeignKey(str(field_aditional_info))
     elif (field_type == "DecimalField"):
         return models.DecimalField(max_digits=9, decimal_places=2)
     elif (field_type == "IntegerField"):
